@@ -4,39 +4,42 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class GridSpace : MonoBehaviour
+namespace APG
 {
-    public Button button;
-    public TextMeshProUGUI buttonText;
-
-    private GameManager gameManager;
-    public void SetSpace()
+    public class GridSpace : MonoBehaviour
     {
-        buttonText.text = gameManager.GetPlayerSide();
-        DisableButton();
+        public Button button;
+        public TextMeshProUGUI buttonText;
 
-        gameManager.EndTurn();
-    }
+        private GameManager gameManager;
+        public void SetSpace()
+        {
+            buttonText.text = gameManager.GetPlayerSide();
+            DisableButton();
 
-    public void EnableButton()
-    {
-        button.interactable = true;
-        buttonText.text = "";
-    }
+            gameManager.EndTurn();
+        }
 
-    public void DisableButton()
-    {
-        button.interactable = false;
-    }
+        public void EnableButton()
+        {
+            button.interactable = true;
+            buttonText.text = "";
+        }
+
+        public void DisableButton()
+        {
+            button.interactable = false;
+        }
 
 
-    public void SetGameControllerReference(GameManager manager)
-    {
-        gameManager = manager;
-    }
+        public void SetGameControllerReference(GameManager manager)
+        {
+            gameManager = manager;
+        }
 
-    public string GetButtonText()
-    {
-        return buttonText.text.ToString();
+        public string GetButtonText()
+        {
+            return buttonText.text.ToString();
+        }
     }
 }
