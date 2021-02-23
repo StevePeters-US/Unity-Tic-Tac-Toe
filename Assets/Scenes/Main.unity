@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (2)
@@ -777,6 +781,8 @@ MonoBehaviour:
   agentControlType: 0
   panelImage: {fileID: 417768571}
   panelText: {fileID: 596195201}
+  agentIndex: 0
+  agentName: X
 --- !u!4 &264833556
 Transform:
   m_ObjectHideFlags: 0
@@ -1051,6 +1057,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (1)
@@ -1153,6 +1163,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (4)
@@ -1305,6 +1319,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (3)
@@ -1898,11 +1916,13 @@ MonoBehaviour:
   - {fileID: 1811958722}
   - {fileID: 408427877}
   - {fileID: 548741600}
+  gridValues: 000000000000000000000000000000000000000000000000000000000000000000000000
   gameOverPanel: {fileID: 2079605762}
   gameOverText: {fileID: 463675459}
   restartGameButton: {fileID: 626231537}
-  playerX: {fileID: 264833555}
-  playerO: {fileID: 1578427939}
+  playerAgents:
+  - {fileID: 264833555}
+  - {fileID: 1578427939}
   activePlayerColor:
     panelColor: {r: 0.5019608, g: 1, b: 1, a: 1}
     textColor: {r: 1, g: 0, b: 0.39215687, a: 1}
@@ -2136,6 +2156,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (6)
@@ -2596,6 +2620,8 @@ MonoBehaviour:
   agentControlType: 0
   panelImage: {fileID: 1351333772}
   panelText: {fileID: 1466376806}
+  agentIndex: 1
+  agentName: O
 --- !u!4 &1578427940
 Transform:
   m_ObjectHideFlags: 0
@@ -2828,6 +2854,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (7)
@@ -2930,6 +2960,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (5)
@@ -3134,6 +3168,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace (8)
@@ -3537,6 +3575,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 608628257}
     m_Modifications:
+    - target: {fileID: 1058250744639979092, guid: 9ba7800599be660488350f839c82a805, type: 3}
+      propertyPath: agentIndex
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6975631964529087596, guid: 9ba7800599be660488350f839c82a805, type: 3}
       propertyPath: m_Name
       value: GridSpace

@@ -13,37 +13,29 @@ namespace APG
         public Color textColor;
     }
 
-/*    [System.Serializable]
-    public class PlayerUI
-    {
-        public Image panelImage;
-        public TextMeshProUGUI panelText;
-    }*/
-
     public class GameManager : MonoBehaviour
     {
         public GridSpace[] gridSpaces;
+        public int[] gridValues = new int[9];
         public GameObject gameOverPanel;
         public TextMeshProUGUI gameOverText;
         public GameObject restartGameButton;
 
-        public PlayerAgent playerX;
-        public PlayerAgent playerO;
+        public PlayerAgent[] playerAgents;
+
         public PlayerColor activePlayerColor;
         public PlayerColor inactivePlayerColor;
 
         public Button XControlTypeButton;
         public Button OControlTypeButton;
 
-        private string playerSide;
+      //  private string playerSide; // Replacing this with index
+        private int currentAgentIndex = 0;
         private int moveCount;
 
         private void Awake()
         {
-            foreach (GridSpace gridSpace in gridSpaces)
-            {
-                gridSpace.SetGameControllerReference(this);
-            }
+            foreach (GridSpace gridSpace in gridSpaces) gridSpace.SetGameControllerReference(this);
 
             RestartEpisode();
         }
@@ -55,16 +47,30 @@ namespace APG
             XControlTypeButton.gameObject.SetActive(false);
             OControlTypeButton.gameObject.SetActive(false);
 
-            playerSide = "X";
-            SetPlayerColors(playerX, playerO);
+            currentAgentIndex = 0;
+            SetPlayerColors(playerAgents[0] , playerAgents[1]);
 
             moveCount = 0;
-            foreach (GridSpace gridSpace in gridSpaces) gridSpace.EnableButton();
+            foreach (GridSpace gridSpace in gridSpaces)
+            {
+                gridSpace.EnableButton();
+                gridSpace.agentIndex = -1;
+            }
+
+            for (int i = 0; i < gridValues.Length; i++)
+            {
+                gridValues[i] = -1;
+            }
         }
 
-        public string GetPlayerSide()
+        public int GetCurrentAgentIndex()
         {
-            return playerSide;
+            return currentAgentIndex;
+        }
+
+        public string GetCurrentAgentName()
+        {
+            return playerAgents[currentAgentIndex].agentName;
         }
 
         public void EndTurn()
@@ -72,21 +78,26 @@ namespace APG
             moveCount++;
             if (moveCount >= 9) GameOver(true);
 
-            //Check win condition
-            bool win = (gridSpaces[0].GetButtonText() == playerSide && gridSpaces[1].GetButtonText() == playerSide && gridSpaces[2].GetButtonText() == playerSide) ||
-                (gridSpaces[3].GetButtonText() == playerSide && gridSpaces[4].GetButtonText() == playerSide && gridSpaces[5].GetButtonText() == playerSide) ||
-                (gridSpaces[6].GetButtonText() == playerSide && gridSpaces[7].GetButtonText() == playerSide && gridSpaces[8].GetButtonText() == playerSide) ||
+            bool win = (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[1].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex) ||
+                (gridSpaces[3].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[5].GetButtonAgentIndex() == currentAgentIndex) ||
+                (gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[7].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[8].GetButtonAgentIndex() == currentAgentIndex) ||
 
-                (gridSpaces[0].GetButtonText() == playerSide && gridSpaces[3].GetButtonText() == playerSide && gridSpaces[6].GetButtonText() == playerSide) ||
-                (gridSpaces[1].GetButtonText() == playerSide && gridSpaces[4].GetButtonText() == playerSide && gridSpaces[7].GetButtonText() == playerSide) ||
-                (gridSpaces[2].GetButtonText() == playerSide && gridSpaces[5].GetButtonText() == playerSide && gridSpaces[8].GetButtonText() == playerSide) ||
+                (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[3].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex) ||
+                (gridSpaces[1].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[7].GetButtonAgentIndex() == currentAgentIndex) ||
+                (gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[5].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[8].GetButtonAgentIndex() == currentAgentIndex) ||
 
-                (gridSpaces[0].GetButtonText() == playerSide && gridSpaces[4].GetButtonText() == playerSide && gridSpaces[8].GetButtonText() == playerSide) ||
-                (gridSpaces[6].GetButtonText() == playerSide && gridSpaces[4].GetButtonText() == playerSide && gridSpaces[2].GetButtonText() == playerSide);
-
+                (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[8].GetButtonAgentIndex() == currentAgentIndex) ||
+                (gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex);
+            
             if (win) GameOver(false);
 
             else ChangeSides();
+        }
+
+        public void selectGridSpace(int gridSpaceIdx)
+        {
+            gridSpaces[gridSpaceIdx].SetSpace();
+            gridValues[gridSpaceIdx] = GetCurrentAgentIndex();
         }
 
         void GameOver(bool isDraw)
@@ -100,15 +111,15 @@ namespace APG
             OControlTypeButton.gameObject.SetActive(true);
 
             if (isDraw) gameOverText.text = "It's a Draw";
-            else gameOverText.text = playerSide + " Wins!";
+            else gameOverText.text =  playerAgents[currentAgentIndex].agentName + " Wins!";
         }
 
         void ChangeSides()
         {
-            playerSide = (playerSide == "X") ? "O" : "X"; // Note: Capital Letters for "X" and "O"
+            currentAgentIndex = currentAgentIndex == 1 ? 0 : 1; // switch to other agent
 
-            if (playerSide == "X") { SetPlayerColors(playerX, playerO); }
-            else { SetPlayerColors(playerO, playerX); }
+            if (currentAgentIndex == 1) {SetPlayerColors(playerAgents[1], playerAgents[0]); }
+            else { SetPlayerColors(playerAgents[0], playerAgents[1]); }
         }
 
         void SetPlayerColors(PlayerAgent newPlayer, PlayerAgent oldPlayer)

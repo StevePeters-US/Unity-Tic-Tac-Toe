@@ -10,11 +10,15 @@ namespace APG
     {
         public Button button;
         public TextMeshProUGUI buttonText;
+        public int agentIndex = -1;
 
         private GameManager gameManager;
         public void SetSpace()
         {
-            buttonText.text = gameManager.GetPlayerSide();
+            buttonText.text = gameManager.GetCurrentAgentName();
+            agentIndex = gameManager.GetCurrentAgentIndex();
+
+            Debug.Log(agentIndex);
             DisableButton();
 
             gameManager.EndTurn();
@@ -37,9 +41,9 @@ namespace APG
             gameManager = manager;
         }
 
-        public string GetButtonText()
+        public int GetButtonAgentIndex()
         {
-            return buttonText.text.ToString();
+            return agentIndex;
         }
     }
 }
