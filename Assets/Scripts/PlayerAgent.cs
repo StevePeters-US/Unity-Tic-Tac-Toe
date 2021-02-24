@@ -9,18 +9,6 @@ using TMPro;
 
 namespace APG
 {
-    // Should have 3 settings human, random, and inference, 
-    // So a bool is set for human input or random if there is no model set ( which would run inference).
-    // Observations per grid section are -1 for X, 1 for O, 0 if empty.
-    // Agent can only choose 1 output out of 9 ( 1 hot encoded).
-
-/*    public enum AgentControlType
-    {
-        human,
-        random,
-        ai
-    }*/
-
     [System.Serializable]
     public class PlayerUI
     {
@@ -30,8 +18,6 @@ namespace APG
 
     public class PlayerAgent : Agent
     {
-       // [SerializeField] private AgentControlType agentControlType = AgentControlType.human; // If true, this script does nothing
-
         public bool humanControlled = true;
 
         public Image panelImage;
@@ -66,7 +52,6 @@ namespace APG
                     if (gameManager.gridValues[heuristicRandomIndex] == -1) validIndexFound = true;
                 }
             }
-           // Debug.Log(agentIndex + " : Random index = " + heuristicRandomIndex);
             RequestDecision();
         }
 
@@ -84,21 +69,6 @@ namespace APG
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
-            /*           var discreteActionsOut = actionsOut.DiscreteActions;
-
-                       bool validIndexFound = false;
-                       int randomIdx = 0;
-
-                       while (!validIndexFound)
-                       {
-                           randomIdx = Random.Range(0, 9);
-                           if (gameManager.gridValues[randomIdx] == -1) validIndexFound = true;
-                       }
-                       Debug.Log("Random index = " + randomIdx);
-                       discreteActionsOut[0] = randomIdx;*/
-
-          //  Debug.Log(agentIndex + " : Random index = " + heuristicRandomIndex);
-
             var discreteActionsOut = actionsOut.DiscreteActions;
             discreteActionsOut[0] = heuristicRandomIndex;
         }
@@ -110,7 +80,6 @@ namespace APG
             int gridNum = actionBuffers.DiscreteActions[0];
             if (gridNum < gameManager.gridValues.Length)
             {
-              //  Debug.Log(agentIndex + " : GridSpace index = " + gridNum);
                 gameManager.selectGridSpace(gridNum);
             }
         }
