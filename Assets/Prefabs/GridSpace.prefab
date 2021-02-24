@@ -123,8 +123,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1058250744639979092}
-        m_TargetAssemblyTypeName: GridSpace, Assembly-CSharp
-        m_MethodName: SetSpace
+        m_TargetAssemblyTypeName: APG.GridSpace, Assembly-CSharp
+        m_MethodName: HumanPressedButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -148,7 +148,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 6975631964529087594}
   buttonText: {fileID: 6975631965564592505}
-  playerSide: X
+  agentIndex: -1
+  gridSpaceIndex: -1
 --- !u!1 &6975631965564592507
 GameObject:
   m_ObjectHideFlags: 0

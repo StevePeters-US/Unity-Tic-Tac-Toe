@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.MLAgents;
 
 namespace APG
 {
@@ -29,14 +30,24 @@ namespace APG
         public Button XControlTypeButton;
         public Button OControlTypeButton;
 
-      //  private string playerSide; // Replacing this with index
+        public bool training = false;
+
+        //  private string playerSide; // Replacing this with index
         private int currentAgentIndex = 0;
-        private int moveCount;
+        private int moveCount = 0;
+
 
         private void Awake()
         {
-            foreach (GridSpace gridSpace in gridSpaces) gridSpace.SetGameControllerReference(this);
-
+            for (int i = 0; i < gridSpaces.Length; i++)
+            {
+                gridSpaces[i].SetGameControllerReference(this);
+                gridSpaces[i].gridSpaceIndex = i;
+            }
+           // Academy.Instance.AutomaticSteppingEnabled = false;
+        }
+        private void Start()
+        {
             RestartEpisode();
         }
 
@@ -48,20 +59,15 @@ namespace APG
             OControlTypeButton.gameObject.SetActive(false);
 
             currentAgentIndex = 0;
-            SetPlayerColors(playerAgents[0] , playerAgents[1]);
+            SetPlayerColors(playerAgents[0], playerAgents[1]);
 
             moveCount = 0;
-            foreach (GridSpace gridSpace in gridSpaces)
-            {
-                gridSpace.EnableButton();
-                gridSpace.agentIndex = -1;
-            }
+            ResetAllButtons();
+            ResetGridValues();
 
-            for (int i = 0; i < gridValues.Length; i++)
-            {
-                gridValues[i] = -1;
-            }
+            GetAgentDecision();
         }
+
 
         public int GetCurrentAgentIndex()
         {
@@ -73,11 +79,46 @@ namespace APG
             return playerAgents[currentAgentIndex].agentName;
         }
 
+        public void selectGridSpace(int gridSpaceIndex)
+        {
+            // Check that valid grid space has been selected
+            if (gridValues[gridSpaceIndex] == -1)
+            {
+                gridSpaces[gridSpaceIndex].SetSpace();
+                gridValues[gridSpaceIndex] = GetCurrentAgentIndex();
+                EndTurn();
+            }
+
+            else
+            {
+                Debug.LogWarning("invalid grid space selection " + gridSpaceIndex + " by agent num : " + currentAgentIndex);
+                playerAgents[currentAgentIndex].InvalidDecisionPenalty();
+               // Debug.Break();
+                GetAgentDecision();
+            }
+
+
+          /*  Debug.Log("0 : " + gridValues[0] +
+                " 1 : " + gridValues[1] +
+                " 2 : " + gridValues[2] +
+
+                " 3 : " + gridValues[3] +
+                " 4 : " + gridValues[4] +
+                " 5 : " + gridValues[5] +
+
+                " 6 : " + gridValues[6] +
+                " 7 : " + gridValues[7] +
+                " 8 : " + gridValues[8]
+                );*/
+        }
+
         public void EndTurn()
         {
+           // Academy.Instance.EnvironmentStep();
             moveCount++;
-            if (moveCount >= 9) GameOver(true);
+           // Debug.Log("Move count : " + moveCount);
 
+            // Brute force win condition check
             bool win = (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[1].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex) ||
                 (gridSpaces[3].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[5].GetButtonAgentIndex() == currentAgentIndex) ||
                 (gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[7].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[8].GetButtonAgentIndex() == currentAgentIndex) ||
@@ -88,22 +129,31 @@ namespace APG
 
                 (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[8].GetButtonAgentIndex() == currentAgentIndex) ||
                 (gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex);
-            
+
             if (win) GameOver(false);
+                        
+            else if (moveCount > 8)
+            {
+                GameOver(true);
+                return;
+            }
 
             else ChangeSides();
         }
 
-        public void selectGridSpace(int gridSpaceIdx)
+        void ChangeSides()
         {
-            gridSpaces[gridSpaceIdx].SetSpace();
-            gridValues[gridSpaceIdx] = GetCurrentAgentIndex();
+            currentAgentIndex = currentAgentIndex == 1 ? 0 : 1; // switch to other agent
+
+            if (currentAgentIndex == 1) { SetPlayerColors(playerAgents[1], playerAgents[0]); }
+            else { SetPlayerColors(playerAgents[0], playerAgents[1]); }
+
+            GetAgentDecision();            
         }
 
         void GameOver(bool isDraw)
         {
-            // Disable all buttons
-            foreach (GridSpace gridSpace in gridSpaces) gridSpace.DisableButton();
+            DisableAllButtons();
 
             gameOverPanel.SetActive(true);
             restartGameButton.SetActive(true);
@@ -111,16 +161,13 @@ namespace APG
             OControlTypeButton.gameObject.SetActive(true);
 
             if (isDraw) gameOverText.text = "It's a Draw";
-            else gameOverText.text =  playerAgents[currentAgentIndex].agentName + " Wins!";
+            else gameOverText.text = playerAgents[currentAgentIndex].agentName + " Wins!";
+
+            foreach (PlayerAgent agent in playerAgents) agent.EndEpisode();
+
+            if (training) RestartEpisode();
         }
 
-        void ChangeSides()
-        {
-            currentAgentIndex = currentAgentIndex == 1 ? 0 : 1; // switch to other agent
-
-            if (currentAgentIndex == 1) {SetPlayerColors(playerAgents[1], playerAgents[0]); }
-            else { SetPlayerColors(playerAgents[0], playerAgents[1]); }
-        }
 
         void SetPlayerColors(PlayerAgent newPlayer, PlayerAgent oldPlayer)
         {
@@ -128,6 +175,66 @@ namespace APG
             newPlayer.panelText.color = activePlayerColor.textColor;
             oldPlayer.panelImage.color = inactivePlayerColor.panelColor;
             oldPlayer.panelText.color = inactivePlayerColor.textColor;
+        }
+
+        void EnableAvailableButtons()
+        {
+            foreach (GridSpace gridSpace in gridSpaces)
+            {
+                if (gridSpace.agentIndex == -1)
+                {
+                    gridSpace.EnableButton();
+                }
+            }
+        }
+
+        private void GetAgentDecision()
+        {
+            // Update input type - if human, enable all available buttons
+            if (playerAgents[currentAgentIndex].humanControlled == true)
+            {
+                EnableAvailableButtons();
+            }
+
+            // Otherwise request decision from agent
+            else
+            {
+                DisableAllButtons();
+
+                // Give the illusion that the computer is thinking by adding a slight delay for AI decisions
+                if (!training && !playerAgents[currentAgentIndex].humanControlled) Invoke("RequestAgentDecision", Random.Range(0.5f, 2.0f));
+                else RequestAgentDecision();
+            }
+        }
+
+        private void RequestAgentDecision()
+        {
+                   //     Academy.Instance.EnvironmentStep();
+
+           // playerAgents[currentAgentIndex].RequestDecision();
+            playerAgents[currentAgentIndex].AgentTakeAction();
+            //Academy.Instance.EnvironmentStep();
+        }
+
+        private void DisableAllButtons()
+        {
+            foreach (GridSpace gridSpace in gridSpaces) gridSpace.DisableButton();
+        }
+
+        private void ResetAllButtons()
+        {
+            foreach (GridSpace gridSpace in gridSpaces)
+            {
+                gridSpace.EnableButton();
+                gridSpace.agentIndex = -1;
+            }
+        }
+        private void ResetGridValues()
+        {
+            for (int i = 0; i < gridValues.Length; i++)
+            {
+                gridValues[i] = -1;
+            }
         }
     }
 }

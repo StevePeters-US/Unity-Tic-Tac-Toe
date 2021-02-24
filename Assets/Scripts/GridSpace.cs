@@ -11,17 +11,20 @@ namespace APG
         public Button button;
         public TextMeshProUGUI buttonText;
         public int agentIndex = -1;
+        public int gridSpaceIndex = -1; // The index of this grid space in the gameManagers index
 
         private GameManager gameManager;
         public void SetSpace()
         {
-            buttonText.text = gameManager.GetCurrentAgentName();
-            agentIndex = gameManager.GetCurrentAgentIndex();
+                buttonText.text = gameManager.GetCurrentAgentName();
+                agentIndex = gameManager.GetCurrentAgentIndex();
+                
+                DisableButton();               
+        }
 
-            Debug.Log(agentIndex);
-            DisableButton();
-
-            gameManager.EndTurn();
+        public void HumanPressedButton()
+        {
+            gameManager.selectGridSpace(gridSpaceIndex);
         }
 
         public void EnableButton()

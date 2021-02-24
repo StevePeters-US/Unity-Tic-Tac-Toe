@@ -32,6 +32,8 @@ namespace APG
     {
         [SerializeField] private AgentControlType agentControlType = AgentControlType.human; // If true, this script does nothing
 
+        public bool humanControlled = true;
+
         public Image panelImage;
         public TextMeshProUGUI panelText;
         public int agentIndex = 1;
@@ -39,32 +41,40 @@ namespace APG
 
         private GameManager gameManager;
 
+        private int heuristicRandomIndex = -1;
+
         private void Awake()
         {
             if (!gameManager) gameManager = FindObjectOfType<GameManager>();
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
 
         public override void OnEpisodeBegin()
         {
 
         }
 
+        public void AgentTakeAction()
+        {
+            if (true)
+            {
+                bool validIndexFound = false;
+
+                while (!validIndexFound)
+                {
+                    heuristicRandomIndex = Random.Range(0, 9);
+                    if (gameManager.gridValues[heuristicRandomIndex] == -1) validIndexFound = true;
+                }
+            }
+
+            RequestDecision();
+        }
 
         // These are the observations that are fed to the model on decision request (defaults to every 5th fixed frame in the decision requester component attached to the agent).
         public override void CollectObservations(VectorSensor sensor)
         {
+            sensor.AddObservation(agentIndex);
+
             // 9 observations Get board status from game manager
             for (int i = 0; i < gameManager.gridValues.Length; i++)
             {
@@ -74,10 +84,21 @@ namespace APG
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
-            var discreteActionsOut = actionsOut.DiscreteActions;
-            int randomIdx = Random.Range(0, 10);
+            /*           var discreteActionsOut = actionsOut.DiscreteActions;
 
-            discreteActionsOut[randomIdx] = 1;          
+                       bool validIndexFound = false;
+                       int randomIdx = 0;
+
+                       while (!validIndexFound)
+                       {
+                           randomIdx = Random.Range(0, 9);
+                           if (gameManager.gridValues[randomIdx] == -1) validIndexFound = true;
+                       }
+                       Debug.Log("Random index = " + randomIdx);
+                       discreteActionsOut[0] = randomIdx;*/
+
+            var discreteActionsOut = actionsOut.DiscreteActions;
+            discreteActionsOut[0] = heuristicRandomIndex;
         }
 
 
@@ -87,8 +108,14 @@ namespace APG
             int gridNum = actionBuffers.DiscreteActions[0];
             if (gridNum < gameManager.gridValues.Length)
             {
+               // Debug.Log("GridSpace index = " + gridNum);
                 gameManager.selectGridSpace(gridNum);
             }
+        }
+
+        public void InvalidDecisionPenalty()
+        {
+            AddReward(-0.1f);
         }
     }
 }
