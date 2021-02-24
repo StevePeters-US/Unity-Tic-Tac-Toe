@@ -14,12 +14,12 @@ namespace APG
     // Observations per grid section are -1 for X, 1 for O, 0 if empty.
     // Agent can only choose 1 output out of 9 ( 1 hot encoded).
 
-    public enum AgentControlType
+/*    public enum AgentControlType
     {
         human,
         random,
         ai
-    }
+    }*/
 
     [System.Serializable]
     public class PlayerUI
@@ -30,7 +30,7 @@ namespace APG
 
     public class PlayerAgent : Agent
     {
-        [SerializeField] private AgentControlType agentControlType = AgentControlType.human; // If true, this script does nothing
+       // [SerializeField] private AgentControlType agentControlType = AgentControlType.human; // If true, this script does nothing
 
         public bool humanControlled = true;
 
@@ -66,7 +66,7 @@ namespace APG
                     if (gameManager.gridValues[heuristicRandomIndex] == -1) validIndexFound = true;
                 }
             }
-
+           // Debug.Log(agentIndex + " : Random index = " + heuristicRandomIndex);
             RequestDecision();
         }
 
@@ -97,6 +97,8 @@ namespace APG
                        Debug.Log("Random index = " + randomIdx);
                        discreteActionsOut[0] = randomIdx;*/
 
+          //  Debug.Log(agentIndex + " : Random index = " + heuristicRandomIndex);
+
             var discreteActionsOut = actionsOut.DiscreteActions;
             discreteActionsOut[0] = heuristicRandomIndex;
         }
@@ -108,7 +110,7 @@ namespace APG
             int gridNum = actionBuffers.DiscreteActions[0];
             if (gridNum < gameManager.gridValues.Length)
             {
-               // Debug.Log("GridSpace index = " + gridNum);
+              //  Debug.Log(agentIndex + " : GridSpace index = " + gridNum);
                 gameManager.selectGridSpace(gridNum);
             }
         }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.MLAgents;
 
+
 namespace APG
 {
     [System.Serializable]
@@ -44,7 +45,8 @@ namespace APG
                 gridSpaces[i].SetGameControllerReference(this);
                 gridSpaces[i].gridSpaceIndex = i;
             }
-           // Academy.Instance.AutomaticSteppingEnabled = false;
+
+            //  Academy.Instance.AutomaticSteppingEnabled = false;
         }
         private void Start()
         {
@@ -93,30 +95,27 @@ namespace APG
             {
                 Debug.LogWarning("invalid grid space selection " + gridSpaceIndex + " by agent num : " + currentAgentIndex);
                 playerAgents[currentAgentIndex].InvalidDecisionPenalty();
-               // Debug.Break();
                 GetAgentDecision();
             }
 
 
-          /*  Debug.Log("0 : " + gridValues[0] +
-                " 1 : " + gridValues[1] +
-                " 2 : " + gridValues[2] +
+            /*  Debug.Log("0 : " + gridValues[0] +
+                  " 1 : " + gridValues[1] +
+                  " 2 : " + gridValues[2] +
 
-                " 3 : " + gridValues[3] +
-                " 4 : " + gridValues[4] +
-                " 5 : " + gridValues[5] +
+                  " 3 : " + gridValues[3] +
+                  " 4 : " + gridValues[4] +
+                  " 5 : " + gridValues[5] +
 
-                " 6 : " + gridValues[6] +
-                " 7 : " + gridValues[7] +
-                " 8 : " + gridValues[8]
-                );*/
+                  " 6 : " + gridValues[6] +
+                  " 7 : " + gridValues[7] +
+                  " 8 : " + gridValues[8]
+                  );*/
         }
 
         public void EndTurn()
         {
-           // Academy.Instance.EnvironmentStep();
             moveCount++;
-           // Debug.Log("Move count : " + moveCount);
 
             // Brute force win condition check
             bool win = (gridSpaces[0].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[1].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex) ||
@@ -131,7 +130,7 @@ namespace APG
                 (gridSpaces[6].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[4].GetButtonAgentIndex() == currentAgentIndex && gridSpaces[2].GetButtonAgentIndex() == currentAgentIndex);
 
             if (win) GameOver(false);
-                        
+
             else if (moveCount > 8)
             {
                 GameOver(true);
@@ -148,7 +147,7 @@ namespace APG
             if (currentAgentIndex == 1) { SetPlayerColors(playerAgents[1], playerAgents[0]); }
             else { SetPlayerColors(playerAgents[0], playerAgents[1]); }
 
-            GetAgentDecision();            
+            GetAgentDecision();
         }
 
         void GameOver(bool isDraw)
@@ -160,9 +159,17 @@ namespace APG
             XControlTypeButton.gameObject.SetActive(true);
             OControlTypeButton.gameObject.SetActive(true);
 
-            if (isDraw) gameOverText.text = "It's a Draw";
-            else gameOverText.text = playerAgents[currentAgentIndex].agentName + " Wins!";
+            string gameResultsText;
 
+            if (isDraw) gameResultsText = "It's a Draw";
+            else gameResultsText = playerAgents[currentAgentIndex].agentName + " Wins!";
+
+            gameOverText.text = gameResultsText;
+            Debug.LogWarning(gameResultsText);
+
+            /* if (isDraw) gameOverText.text = "It's a Draw";
+             else gameOverText.text = playerAgents[currentAgentIndex].agentName + " Wins!";*/
+            playerAgents[currentAgentIndex].AddReward(1.0f);
             foreach (PlayerAgent agent in playerAgents) agent.EndEpisode();
 
             if (training) RestartEpisode();
@@ -203,17 +210,15 @@ namespace APG
 
                 // Give the illusion that the computer is thinking by adding a slight delay for AI decisions
                 if (!training && !playerAgents[currentAgentIndex].humanControlled) Invoke("RequestAgentDecision", Random.Range(0.5f, 2.0f));
-                else RequestAgentDecision();
+                else Invoke("RequestAgentDecision", 0.1f);  // Apparently we need this delay since there's no way to order agents https://github.com/Unity-Technologies/ml-agents/issues/4991
+                                                            //  else RequestAgentDecision();
             }
         }
 
         private void RequestAgentDecision()
         {
-                   //     Academy.Instance.EnvironmentStep();
-
-           // playerAgents[currentAgentIndex].RequestDecision();
+           // Debug.Log("Agent " + currentAgentIndex + " take action");
             playerAgents[currentAgentIndex].AgentTakeAction();
-            //Academy.Instance.EnvironmentStep();
         }
 
         private void DisableAllButtons()
