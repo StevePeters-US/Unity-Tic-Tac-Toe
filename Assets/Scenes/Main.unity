@@ -1931,7 +1931,7 @@ MonoBehaviour:
     textColor: {r: 0.2, g: 0.4, b: 0.4, a: 1}
   XControlTypeButton: {fileID: 2052156339}
   OControlTypeButton: {fileID: 1035912708}
-  training: 0
+  training: 1
 --- !u!4 &948114050
 Transform:
   m_ObjectHideFlags: 0
