@@ -128,6 +128,7 @@ namespace APG
             if (currentAgentIndex == 1) { SetPlayerColors(playerAgents[1], playerAgents[0]); }
             else { SetPlayerColors(playerAgents[0], playerAgents[1]); }
 
+            Debug.Log("Player " + playerAgents[currentAgentIndex].agentName + "s turn");
             GetAgentDecision();
         }
 
@@ -137,8 +138,8 @@ namespace APG
 
             gameOverPanel.SetActive(true);
             restartGameButton.SetActive(true);
-          //  XControlTypeButton.gameObject.SetActive(true);
-          //  OControlTypeButton.gameObject.SetActive(true);
+            //  XControlTypeButton.gameObject.SetActive(true);
+            //  OControlTypeButton.gameObject.SetActive(true);
 
             string gameResultsText;
 
@@ -146,7 +147,7 @@ namespace APG
             else gameResultsText = playerAgents[currentAgentIndex].agentName + " Wins!";
 
             gameOverText.text = gameResultsText;
-          //  Debug.LogWarning(gameResultsText);
+            //  Debug.LogWarning(gameResultsText);
 
             playerAgents[currentAgentIndex].AddReward(1.0f);
             foreach (PlayerAgent agent in playerAgents) agent.EndEpisode();
@@ -189,8 +190,8 @@ namespace APG
 
                 // Give the illusion that the computer is thinking by adding a slight delay for AI decisions
                 if (!training && !playerAgents[currentAgentIndex].humanControlled) Invoke("RequestAgentDecision", Random.Range(0.5f, 2.0f));
-                else Invoke("RequestAgentDecision", 0.1f);  // Apparently we need this delay since there's no way to order agents https://github.com/Unity-Technologies/ml-agents/issues/4991
-                //  else RequestAgentDecision();
+                //else Invoke("RequestAgentDecision", 0.1f);  // Apparently we need this delay since there's no way to order agents https://github.com/Unity-Technologies/ml-agents/issues/4991
+                else RequestAgentDecision();
             }
         }
 

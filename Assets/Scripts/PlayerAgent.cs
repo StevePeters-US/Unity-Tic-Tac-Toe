@@ -69,6 +69,7 @@ namespace APG
 
         public override void Heuristic(in ActionBuffers actionsOut)
         {
+            Debug.Log("Player " + agentName + " chose " + heuristicRandomIndex + " in heuristic function");
             var discreteActionsOut = actionsOut.DiscreteActions;
             discreteActionsOut[0] = heuristicRandomIndex;
         }
@@ -78,6 +79,9 @@ namespace APG
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
             int gridNum = actionBuffers.DiscreteActions[0];
+
+            Debug.Log("Player " + agentName + " chose " + gridNum + " in OnActionRecieved");
+
             if (gridNum < gameManager.gridValues.Length)
             {
                 gameManager.selectGridSpace(gridNum);
